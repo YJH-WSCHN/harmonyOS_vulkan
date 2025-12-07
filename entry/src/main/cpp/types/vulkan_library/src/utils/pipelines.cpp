@@ -69,9 +69,7 @@ namespace vulkan {
         multisample_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         multisample_state_create_info.sampleShadingEnable = VK_FALSE;
         multisample_state_create_info.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-
-        //Depth stencil
-        //TODO...
+    
 
         //Color blend
         VkPipelineColorBlendAttachmentState color_blend_attachment_state = {};
