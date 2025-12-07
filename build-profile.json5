@@ -1,0 +1,57 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\33162\\.ohos\\config\\default_MyVulkanApp_MGsvVm3s4o49Mauc1IBYpOjfT-JAHZ6pVsIRTyCUKE0=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B780C379992ECFE4B4ACAABC3E55C83B3930D83FADF36A99B618FA3766D5FBC117E860AD408651F",
+          "profile": "C:\\Users\\33162\\.ohos\\config\\default_MyVulkanApp_MGsvVm3s4o49Mauc1IBYpOjfT-JAHZ6pVsIRTyCUKE0=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\33162\\.ohos\\config\\default_MyVulkanApp_MGsvVm3s4o49Mauc1IBYpOjfT-JAHZ6pVsIRTyCUKE0=.p12",
+          "storePassword": "0000001B55A4C72DAAB5DED182ED8EC89B8F91A329D36A85338326D5F718E412504E0A1F8C812CA29EF318"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "targetSdkVersion": "6.0.0(20)",
+        "compatibleSdkVersion": "5.0.5(17)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "nativeCompiler": "BiSheng",
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}
