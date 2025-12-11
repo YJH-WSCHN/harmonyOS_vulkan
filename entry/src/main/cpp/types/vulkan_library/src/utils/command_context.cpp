@@ -73,10 +73,10 @@ namespace vulkan {
         }
 
         vkCmdBeginRenderPass(buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (*pipelines)[0]);
+        /*vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (*pipelines)[0]);
         vkCmdSetViewport(buffer, 0, 1, &viewport);
         vkCmdSetScissor(buffer, 0, 1, &scissor);
-        vkCmdDraw(buffer, 3, 1, 0, 0);
+        vkCmdDraw(buffer, 3, 1, 0, 0);*/
         vkCmdEndRenderPass(buffer);
 
         if (vkEndCommandBuffer(buffer) != VK_SUCCESS) {

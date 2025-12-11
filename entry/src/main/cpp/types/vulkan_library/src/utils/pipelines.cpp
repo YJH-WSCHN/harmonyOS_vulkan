@@ -12,7 +12,7 @@ namespace vulkan {
         //Shaders
         auto vertex_shader_module = create_shader_module(device, vertex_shader, vertex_shader_len);
         auto fragment_shader_module = create_shader_module(device, fragment_shader, fragment_shader_len);
-
+        //TODO:shader may not have been successfully loaded, try to use .spv file, it should be put under the resources/rawfile
         std::vector<VkPipelineShaderStageCreateInfo> shader_stages(2);
         shader_stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shader_stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -74,7 +74,7 @@ namespace vulkan {
         //Color blend
         VkPipelineColorBlendAttachmentState color_blend_attachment_state = {};
         color_blend_attachment_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        color_blend_attachment_state.blendEnable = VK_TRUE;
+        color_blend_attachment_state.blendEnable = VK_FALSE;
         color_blend_attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
         color_blend_attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
         color_blend_attachment_state.colorBlendOp = VK_BLEND_OP_ADD;
@@ -148,7 +148,7 @@ namespace vulkan {
 
         VkShaderModule shader_module;
         if (vkCreateShaderModule(device, &create_info, nullptr, &shader_module) != VK_SUCCESS) {
-            print_log(Error, "Failed to create shader module!");
+            OH_LOG_ERROR(LOG_APP, "Failed to create shader module!");
         }
 
         return shader_module;

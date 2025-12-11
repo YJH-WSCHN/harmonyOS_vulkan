@@ -48,15 +48,16 @@ namespace vulkan {
 
     VkExtent2D Swap_chain_supports::get_extent(unsigned int width, unsigned int height) const {
         if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+            OH_LOG_INFO(LOG_APP,"==========%{public}d===============",capabilities.currentExtent.width);
             return capabilities.currentExtent;
         }
         else {
             VkExtent2D extent{width, height};
             extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
             extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
-
+            OH_LOG_INFO(LOG_APP,"==========%{public}d===============",capabilities.currentExtent.width);
             return extent;
-        }
+        }   
     }
 
     bool Swap_chain::create(VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface, const Window *window, const Queues *queues, VkSwapchainKHR old_swap_chain) {
@@ -103,9 +104,12 @@ namespace vulkan {
         extent = surface_extent;
 
         if (vkCreateSwapchainKHR(device, &create_info, nullptr, &swap_chain) != VK_SUCCESS) {
-            print_log(Error, "Failed to create swap chain!");
+            OH_LOG_ERROR(LOG_APP, "Failed to create swap chain!");
             return false;
         }
+        OH_LOG_INFO(LOG_APP, "swapchain image count=%{public}u, extent=%{public}ux%{public}u",
+            image_count, extent.width, extent.height);
+        
 
         return true;
     }
@@ -156,7 +160,7 @@ namespace vulkan {
             image_view_create_info.subresourceRange.layerCount = 1;
 
             if (vkCreateImageView(device, &image_view_create_info, nullptr, &image_views[i]) != VK_SUCCESS) {
-                print_log(Error, "Failed to create image view!");
+                OH_LOG_ERROR(LOG_APP, "Failed to create image view!");
                 return false;
             }
 
@@ -170,9 +174,10 @@ namespace vulkan {
             frame_buffer_create_info.layers = 1;
 
             if (vkCreateFramebuffer(device, &frame_buffer_create_info, nullptr, &frame_buffers[i]) != VK_SUCCESS) {
-                print_log(Error, "Failed to create frame buffer!");
+                OH_LOG_ERROR(LOG_APP, "Failed to create frame buffer!");
                 return false;
             }
+            OH_LOG_INFO(LOG_APP, "framebuffer[%{public}u] for swapchain image %{public}p", i, images[i]);
         }
 
         return true;

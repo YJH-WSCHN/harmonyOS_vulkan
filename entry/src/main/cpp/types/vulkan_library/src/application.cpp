@@ -151,7 +151,7 @@ namespace vulkan {
             case VK_ERROR_OUT_OF_DATE_KHR:
                 return true;
             default:
-                print_log(Error, "Failed to acquire swap chain image");
+                OH_LOG_ERROR(LOG_APP, "Failed to acquire swap chain image");
                 return std::nullopt;
         }
 
@@ -160,7 +160,7 @@ namespace vulkan {
         auto draw_buffer = command_context.get_draw_buffer(current_frame, image_index, &swap_chain, &render_pass, &pipelines);
 
         if (!draw_buffer) {
-            print_log(Error, "Failed to acquire draw buffer");
+            OH_LOG_ERROR(LOG_APP, "Failed to acquire draw buffer");
             return std::nullopt;
         }
 
@@ -187,8 +187,9 @@ namespace vulkan {
         present_info.swapchainCount = 1;
         present_info.pSwapchains = &swap_chain.swap_chain;
         present_info.pImageIndices = &image_index;
-
-        switch (vkQueuePresentKHR(queues.present_queue, &present_info)) {
+        auto res = vkQueuePresentKHR(queues.present_queue, &present_info); 
+        OH_LOG_INFO(LOG_APP, "========%{public}d========",res);
+        switch (res) {
             case VK_SUCCESS:
                 break;
             case VK_SUBOPTIMAL_KHR: case VK_ERROR_OUT_OF_DATE_KHR:
@@ -200,6 +201,7 @@ namespace vulkan {
         }
 
         current_frame = (current_frame+1)%MAX_FRAMES_IN_FLIGHT;
+        
         OH_LOG_INFO(LOG_APP, ">>> draw_frame end");
 
         return out_of_date;
@@ -283,6 +285,7 @@ namespace vulkan {
         if (vkCreateSurfaceOHOS(instance, &create_info, nullptr, &surface) != VK_SUCCESS) {
             valid = false;
         }
+        
         #endif
     }
 
