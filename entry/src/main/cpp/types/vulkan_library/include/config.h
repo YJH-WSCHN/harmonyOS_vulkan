@@ -4,7 +4,7 @@
 #define VULKAN_LIBRARY_CONFIG_H
 
 #pragma once
-#include <vulkan/vulkan.h>
+
 #ifdef _WIN32
     #define WINDOWS_TEST
     #define VULKAN_DEBUG
@@ -16,14 +16,11 @@
     #include "GLFW/glfw3native.h"
 #else
     #include "vulkan/vulkan_ohos.h"
-    #include <vulkan/vulkan.h>
-    #include <hilog/log.h>
-    #include <vulkan/vulkan_ohos.h>
+    #include "hilog/log.h"
     #undef LOG_DOMAIN
     #define LOG_DOMAIN 0x1234
     #undef LOG_TAG
     #define LOG_TAG "VULKAN_DEMO"
-    //#include "hilog/log.h"
 
     #ifdef NDEBUG
         #define VULKAN_RELEASE

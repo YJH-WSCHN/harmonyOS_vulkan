@@ -12,7 +12,6 @@
 #include "utils/sync_objects.h"
 
 #include "vector"
-#include <vulkan/vulkan_ohos.h>
 
 namespace vulkan {
     /**
@@ -20,7 +19,7 @@ namespace vulkan {
      * @brief A structure for vulkan application
      */
     struct Window {
-        OHNativeWindow *window;  /// The window handle
+        void *window;  /// The window handle
         unsigned int width;  /// The window width
         unsigned int height; /// The window height
     };
@@ -65,7 +64,6 @@ namespace vulkan {
          * @note Considering swap chain won't be promised to trigger suboptimal or out of date when the size is changed, you can call this function manually
          */
         bool refresh();
-        OHNativeWindow* getWindow();
 
     private:
         //Statics
@@ -93,7 +91,7 @@ namespace vulkan {
         //Functions
         void create_instance();
         void create_debug_messenger();
-        void create_surface(OHNativeWindow *window_handle);
+        void create_surface(void *window_handle);
         void get_physical_device();
         void create_device();
 

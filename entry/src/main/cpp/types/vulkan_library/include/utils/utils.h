@@ -44,6 +44,8 @@ namespace vulkan {
         va_end(args);
         printf("\n");
         #elif defined(VULKAN_DEBUG)
+        //TODO: Hilog here!!!
+        //Don't hilog in the main code!!!
         #endif
     }
 

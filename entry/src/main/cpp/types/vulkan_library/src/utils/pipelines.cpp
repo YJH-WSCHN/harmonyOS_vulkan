@@ -1,18 +1,16 @@
 //Made by Han_feng
 
-#include "../../include/utils/utils.h"
-#include "../../include/utils/pipelines.h"
-#include "../../include/utils/shaders/vertex_shader.h"
-#include "../../include/utils/shaders/fragment_shader.h"
-#include <vulkan/vulkan_core.h>
-
+#include "utils/utils.h"
+#include "utils/pipelines.h"
+#include "utils/shaders/vertex_shader.h"
+#include "utils/shaders/fragment_shader.h"
 
 namespace vulkan {
     bool Pipelines::create(VkDevice device, const Render_pass *render_pass) {
         //Shaders
         auto vertex_shader_module = create_shader_module(device, vertex_shader, vertex_shader_len);
         auto fragment_shader_module = create_shader_module(device, fragment_shader, fragment_shader_len);
-        //TODO:shader may not have been successfully loaded, try to use .spv file, it should be put under the resources/rawfile
+
         std::vector<VkPipelineShaderStageCreateInfo> shader_stages(2);
         shader_stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shader_stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -148,7 +146,7 @@ namespace vulkan {
 
         VkShaderModule shader_module;
         if (vkCreateShaderModule(device, &create_info, nullptr, &shader_module) != VK_SUCCESS) {
-            OH_LOG_ERROR(LOG_APP, "Failed to create shader module!");
+            print_log(Error, "Failed to create shader module!");
         }
 
         return shader_module;

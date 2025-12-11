@@ -1,30 +1,18 @@
 //Made by Han_feng
 
-#include "../cpp/types/vulkan_library/include/config.h"
-#include "../cpp/types/vulkan_library/include/application.h"
-#include "../cpp/types/vulkan_library/include/utils/utils.h"
-#include "../cpp/types/vulkan_library/include/utils/swap_chain.h"
+#include "config.h"
+#include "application.h"
+#include "utils/utils.h"
 
 #include "set"
 #include "string"
-#include <vulkan/vulkan.h>
-#include <hilog/log.h>
-#include <vulkan/vulkan_ohos.h>
-#undef LOG_DOMAIN
-#define LOG_DOMAIN 0x1234
-#undef LOG_TAG
-#define LOG_TAG "VULKAN_DEMO"
+
 namespace vulkan {
     #ifdef WINDOWS_TEST
     std::vector<const char*> Application::INSTANCE_EXTENSIONS = {
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         VK_KHR_SURFACE_EXTENSION_NAME,
         VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-    };
-    #elif defined(VULKAN_DEBUG)
-    std::vector<const char*> Application::INSTANCE_EXTENSIONS = {
-        VK_KHR_SURFACE_EXTENSION_NAME,
-        VK_OHOS_SURFACE_EXTENSION_NAME
     };
     #else
     std::vector<const char*> Application::INSTANCE_EXTENSIONS = {
@@ -81,9 +69,6 @@ namespace vulkan {
 
     //Vulkan application
     Application::Application(const Window *window): window(window) {
-        OH_LOG_INFO(LOG_APP, "Application ctor entry");
-        try {
-        OH_LOG_INFO(LOG_APP, "create_instance");
         create_instance();
         create_surface(window->window);
         
@@ -98,17 +83,6 @@ namespace vulkan {
         valid = pipelines.create(device, &render_pass);
         valid = command_context.create(device, &queues);
         valid = sync_objects.create(device, swap_chain.get_image_count());
-        OH_LOG_INFO(LOG_APP, "create_instance");
-        
-    } catch (const std::exception& e) {
-        OH_LOG_ERROR(LOG_APP, "Application exception: %s", e.what());
-        throw;   // 再抛也行，至少先打印
-    } catch (...) {
-        OH_LOG_ERROR(LOG_APP, "Application unknown exception");
-        throw;
-    }
-
-        
     }
 
     Application::~Application() {
@@ -122,7 +96,7 @@ namespace vulkan {
         vkDestroyDevice(device, nullptr);
         vkDestroySurfaceKHR(instance, surface, nullptr);
 
-        #ifdef VULKAN_DEBUG
+        #ifdef WINDOWS_TEST
         if (const auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT")); func != nullptr) {
             func(instance, debug_messenger, nullptr);
         }
@@ -136,7 +110,6 @@ namespace vulkan {
     }
 
     std::optional<bool> Application::draw_frame() {
-        OH_LOG_INFO(LOG_APP, ">>> draw_frame begin");
         bool out_of_date = false;
 
         vkWaitForFences(device, 1, &sync_objects.in_flight_fences[current_frame], VK_TRUE, UINT64_MAX);
@@ -151,7 +124,7 @@ namespace vulkan {
             case VK_ERROR_OUT_OF_DATE_KHR:
                 return true;
             default:
-                OH_LOG_ERROR(LOG_APP, "Failed to acquire swap chain image");
+                print_log(Error, "Failed to acquire swap chain image");
                 return std::nullopt;
         }
 
@@ -160,7 +133,7 @@ namespace vulkan {
         auto draw_buffer = command_context.get_draw_buffer(current_frame, image_index, &swap_chain, &render_pass, &pipelines);
 
         if (!draw_buffer) {
-            OH_LOG_ERROR(LOG_APP, "Failed to acquire draw buffer");
+            print_log(Error, "Failed to acquire draw buffer");
             return std::nullopt;
         }
 
@@ -187,9 +160,8 @@ namespace vulkan {
         present_info.swapchainCount = 1;
         present_info.pSwapchains = &swap_chain.swap_chain;
         present_info.pImageIndices = &image_index;
-        auto res = vkQueuePresentKHR(queues.present_queue, &present_info); 
-        OH_LOG_INFO(LOG_APP, "========%{public}d========",res);
-        switch (res) {
+
+        switch (vkQueuePresentKHR(queues.present_queue, &present_info)) {
             case VK_SUCCESS:
                 break;
             case VK_SUBOPTIMAL_KHR: case VK_ERROR_OUT_OF_DATE_KHR:
@@ -201,9 +173,6 @@ namespace vulkan {
         }
 
         current_frame = (current_frame+1)%MAX_FRAMES_IN_FLIGHT;
-        
-        OH_LOG_INFO(LOG_APP, ">>> draw_frame end");
-
         return out_of_date;
     }
 
@@ -241,16 +210,12 @@ namespace vulkan {
         create_info.pNext = nullptr;
 
         if (vkCreateInstance(&create_info, nullptr, &instance) != VK_SUCCESS) {
-            OH_LOG_INFO(LOG_APP, "Failed to create instance!");
             valid = false;
-        }
-        else{
-            OH_LOG_INFO(LOG_APP, "========success to create instance!=============");
         }
     }
 
     void Application::create_debug_messenger() {
-        #ifdef VULKAN_DEBUG
+        #ifdef WINDOWS_TEST
         auto create_info = populate_debug_messenger_create_info();
         if (const auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT")); func != nullptr) {
             if (func(instance, &create_info, nullptr, &debug_messenger) != VK_SUCCESS) {
@@ -265,7 +230,7 @@ namespace vulkan {
         #endif
     }
 
-    void Application::create_surface(OHNativeWindow *window_handle) {
+    void Application::create_surface(void *window_handle) {
         #ifdef WINDOWS_TEST
         VkWin32SurfaceCreateInfoKHR create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -277,15 +242,16 @@ namespace vulkan {
             valid = false;
         }
         #else
+        //TODO:Don't use ON_LOG_INFO, use print_log!!!
+        //you yourself adjust this... :(
         OH_LOG_INFO(LOG_APP, "g_nativeWindow=%{public}p", window_handle);
         VkSurfaceCreateInfoOHOS create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS;
-        create_info.window = window_handle;
+        create_info.window = static_cast<OHNativeWindow *>(window_handle);
         OH_LOG_INFO(LOG_APP,"g_na111tiveWindow=%{public}p", create_info.window);
         if (vkCreateSurfaceOHOS(instance, &create_info, nullptr, &surface) != VK_SUCCESS) {
             valid = false;
         }
-        
         #endif
     }
 
@@ -341,9 +307,6 @@ namespace vulkan {
         }
     }
 
-    OHNativeWindow* Application::getWindow(){
-        return window->window;
-    }
     int Application::get_physical_device_score(VkPhysicalDevice target, VkSurfaceKHR surface) {
         VkPhysicalDeviceProperties properties;
         VkPhysicalDeviceFeatures features;

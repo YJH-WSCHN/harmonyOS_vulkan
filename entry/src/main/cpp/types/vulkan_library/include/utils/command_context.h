@@ -3,10 +3,10 @@
 #ifndef VULKAN_LIBRARY_COMMAND_CONTEXT_H
 #define VULKAN_LIBRARY_COMMAND_CONTEXT_H
 
-#include "../utils/pipelines.h"
-#include "../utils/queues.h"
-#include "../utils/render_pass.h"
-#include "../utils/swap_chain.h"
+#include "utils/pipelines.h"
+#include "utils/queues.h"
+#include "utils/render_pass.h"
+#include "utils/swap_chain.h"
 #include "vulkan/vulkan.h"
 
 namespace vulkan {

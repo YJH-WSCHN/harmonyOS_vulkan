@@ -3,8 +3,8 @@
 #ifndef VULKAN_LIBRARY_SWAP_CHAIN_H
 #define VULKAN_LIBRARY_SWAP_CHAIN_H
 
-#include "../utils/render_pass.h"
-#include "../utils/queues.h"
+#include "utils/render_pass.h"
+#include "utils/queues.h"
 #include "vulkan/vulkan.h"
 
 #include "vector"

@@ -7,7 +7,6 @@
 using namespace vulkan;
 
 int main() {
-    #ifdef WINDOWS_TEST
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -42,8 +41,5 @@ int main() {
     end:
     glfwDestroyWindow(glfw_window);
     glfwTerminate();
-    #else
-    print_log(Warning, "Please run this test on Windows!");
-    #endif
     return 0;
 }

@@ -1,7 +1,7 @@
 //Made by Han_feng
 
-#include "../../include/utils/command_context.h"
-#include "../../include/utils/utils.h"
+#include "utils/command_context.h"
+#include "utils/utils.h"
 
 namespace vulkan {
     bool Command_context::create(VkDevice device, const Queues *queues) {
@@ -35,7 +35,7 @@ namespace vulkan {
 
     VkCommandBuffer Command_context::get_draw_buffer(const int index, const int image_index, const Swap_chain *swap_chain, const Render_pass *render_pass, const Pipelines *pipelines) {
         //Render pass begin
-        VkClearValue clear_value = {{{1.0f, 0.0f, 0.0f, 1.0f}}};
+        VkClearValue clear_value = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
         VkRenderPassBeginInfo render_pass_info = {};
         render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         render_pass_info.renderPass = render_pass->render_pass;
@@ -73,10 +73,10 @@ namespace vulkan {
         }
 
         vkCmdBeginRenderPass(buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
-        /*vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (*pipelines)[0]);
+        vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (*pipelines)[0]);
         vkCmdSetViewport(buffer, 0, 1, &viewport);
         vkCmdSetScissor(buffer, 0, 1, &scissor);
-        vkCmdDraw(buffer, 3, 1, 0, 0);*/
+        vkCmdDraw(buffer, 3, 1, 0, 0);
         vkCmdEndRenderPass(buffer);
 
         if (vkEndCommandBuffer(buffer) != VK_SUCCESS) {

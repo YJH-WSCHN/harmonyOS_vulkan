@@ -3,7 +3,7 @@
 #ifndef VULKAN_LIBRARY_PIPELINES_H
 #define VULKAN_LIBRARY_PIPELINES_H
 
-#include "../utils/render_pass.h"
+#include "utils/render_pass.h"
 #include "vulkan/vulkan.h"
 #include "vector"
 
